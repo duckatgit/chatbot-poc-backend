@@ -1,7 +1,9 @@
+require('dotenv').config()
 const OpenAI = require("openai");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
 const app = express();
 const port = 3000;
 
@@ -9,19 +11,11 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: process.env.BOTAPIKEY,
 });
-async function main() {
-    const chatCompletion = await openai.chat.completions.create({
-      messages: [{ role: 'user', content: 'Say this is a test' }],
-      model: 'gpt-3.5-turbo',
-    });
-  }
-  
-  main();
-  
 
-app.post("/", async (request, response) => {
+
+app.post("/chat", async (request, response) => {
   const { chats } = request.body;
 
   const result = await openai.chat.completions.create({
@@ -29,13 +23,13 @@ app.post("/", async (request, response) => {
     messages: [
       {
         role: "system",
-        content: "you are gpt.you can write email ",
+        content: "you are gpt.you will give result only related to invozio.com ",
       },
       ...chats,
     ],
   });
   response.json({
-    output: result.choices[0]
+    output: result.choices[0],
   });
 });
 
